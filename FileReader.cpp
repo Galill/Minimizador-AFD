@@ -4,13 +4,14 @@
 #include <set>
 #include <map>
 #include "FileReader.h"
+#include "Automato.h"
 
 using namespace std;
 
 void FileReader::readFile() {
 	ifstream file;
 	string file_name, line;
-	set<string> estados, estados_finais, estado_inicial;
+	set<string> estados,estado_inicial, estados_finais;
 	set<char> alfabeto;
 	map<pair<string, pair<string, char>>, bool> transicoes;
 
@@ -21,6 +22,7 @@ void FileReader::readFile() {
 
 	if (!file.is_open()) {
 		cout << "Erro ao abrir o arquivo!" << endl;
+		exit(0);
 	}
 
 	while (getline(file, line)) {
@@ -85,45 +87,19 @@ void FileReader::readFile() {
 		else {
 			size_t aux_virgula1 = line.find(",");
 			size_t aux_virgula2 = line.find(",", aux_virgula1 + 1);
-			size_t aux_espaço = line.find(" ", aux_virgula2 + 1);
+			size_t aux_espaï¿½o = line.find(" ", aux_virgula2 + 1);
 			string origem = line.substr(0, aux_virgula1);
 			string destino = line.substr(aux_virgula1 + 1, aux_virgula2 - aux_virgula1 - 1);
-			char simbolo = line[aux_espaço + 1];
+			char simbolo = line[aux_espaï¿½o + 1];
 			transicoes[make_pair(origem, make_pair(destino, simbolo))] = true;
 		}
 	}
 
 	file.close();
 
-	cout << "Estados encontrados:" << endl;
-	for (auto x : estados) {
-		cout << x;
-	}
-	cout << endl;
-
-	cout << "Alfabeto encontrado:" << endl;
-	for (auto x : alfabeto) {
-		cout << x;
-	}
-	cout << endl;
-
-	cout << "Estado inicial encontrado:" << endl;
-	for (auto x : estado_inicial) {
-		cout << x;
-	}
-	cout << endl;
-
-	cout << "Estados finais encontrados:" << endl;
-	for (auto x : estados_finais) {
-		cout << x;
-	}
-	cout << endl;
-
-	cout << "Transicoes encontradas:" << endl;
-	for (auto const& entry : transicoes) {
-		auto const& origem = entry.first.first;
-		auto const& destino = entry.first.second.first;
-		auto const& simbolo = entry.first.second.second;
-		cout << origem << " -> " << destino << ": " << simbolo << endl;
-	}
+	Automato::estados = estados;
+	Automato::alfabeto = alfabeto;
+	Automato::estado_inicial = estado_inicial;
+	Automato::estados_finais = estados_finais;
+	Automato::transicoes = transicoes;
 }
